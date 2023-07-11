@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 
@@ -49,7 +48,7 @@ function App() {
     return () => {
       clearInterval(id);
     };
-  }, [])
+  }, [stepSize])
 
   return (
     <div className="game-container"
@@ -57,6 +56,7 @@ function App() {
     >
       <div className="game-score">{score}</div>
       <img 
+        alt="camel"
         src="/camel.png"
         style={{
           position: 'absolute',
@@ -65,7 +65,7 @@ function App() {
           width: '50px',
           height: '50px',
         }}
-        onClick={() => setScore(s => s+11)}
+        onClick={() => {setScore(s => s+11); setStepSize(s => s+0.1)}}
       />
     </div>
   );
