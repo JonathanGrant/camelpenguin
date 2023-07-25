@@ -14,6 +14,18 @@ class GameObject {
     this.yBorder = yBorder;
   }
 
+  jumpToRandom() {
+    this.x = Math.random()*(this.xBorder-this.xSize)
+    this.y = Math.random()*(this.yBorder-this.ySize)
+  }
+
+  hasCollision(other) {
+    return (
+         ((other.x - this.xSize <= this.x) && (this.x <= other.x + other.xSize))
+      && ((other.y - this.ySize <= this.y) && (this.y <= other.y + other.ySize))
+    )
+  }
+
   checkBorders() {
     if (this.x <= 0) this.dx = Math.abs(this.dx);
     if (this.x >= this.xBorder - this.xSize) this.dx = -Math.abs(this.dx);
@@ -27,15 +39,15 @@ class GameObject {
   }
 
   step(stepSize=0.01) {
-    this.checkBorders()
     this.basicMovement(stepSize)
+    this.checkBorders()
     return this;
   }
 
   render(props) {
     return (
       <img 
-        alt="camel"
+        alt={this.image}
         src={this.image}
         style={{
           position: 'absolute',
@@ -68,4 +80,50 @@ class AccelerationObject extends GameObject {
   }
 }
 
-export {GameObject, AccelerationObject};
+class PlatformerObject extends AccelerationObject {
+  checkBorders() {
+    if (this.x < 0) {
+      this.dx = 0;
+      this.x = 0;
+    }
+    if (this.x > this.xBorder - this.xSize) {
+      this.dx = 0;
+      this.x = this.xBorder - this.xSize;
+    }
+    if (this.y < 0) {
+      this.dy = 0;
+      this.y = 0;
+    }
+    if (this.y > this.yBorder - this.ySize) {
+      this.dy = 0;
+      this.y = this.yBorder - this.ySize;
+    }
+  }
+
+  isTouchingGround() {
+    return this.y == this.yBorder - this.ySize;
+  }
+
+  jump() {
+    if (this.isTouchingGround()) {
+      this.dy = -1;
+    }
+  }
+}
+
+class TimeToLiveObject extends GameObject {
+  constructor(timeToLive=1000, ...args) {
+    super(...args)
+    this.timeToLive = timeToLive
+    this.steps = 0;
+  }
+
+  step(...args) {
+    super.step(...args);
+    this.steps += 1;
+    if (this.steps >= this.timeToLive) return null;
+    return this;
+  }
+}
+
+export {GameObject, AccelerationObject, PlatformerObject, TimeToLiveObject};
