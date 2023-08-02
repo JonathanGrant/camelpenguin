@@ -1,11 +1,3 @@
-.game-container {
-  width: 800px;
-  height: 800px;
-  background-image: url(bg.webp);
-  background-size: cover;
-  cursor:url(hat.png), auto;
-}
-
 .game-score {
   margin: auto;
   width: 50%;
