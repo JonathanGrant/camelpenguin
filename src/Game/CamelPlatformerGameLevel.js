@@ -12,6 +12,13 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
   constructor(tgtSpeed=0, ...args) {
     super(...args);
 
+    /*
+    TODO: Implement these areas
+      this.areas = [Area1, Area2, Area3]
+      this.currentArea = 0;
+      this.areas[this.currentArea];
+    */
+
     // TODO: Propagate height and width or replace everything with percents
     this.fireballs = [];
     this.camel = new PlatformerObject(
@@ -25,6 +32,10 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
 
   step(stepSize) {
     this.camel.step(stepSize);
+    /*let changeInArea = this.camel.step(stepSize);
+    if (changeInArea != 0) {
+      this.currentArea += changeInArea;
+    }*/
     this.target.step(stepSize);
     // Fireball loop
     // Check if any fireballs should dissapear, either through TTL or collision
@@ -103,6 +114,7 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
   render() {
     return (
         <React.Fragment>
+            {/* {this.areas[this.currentArea].render()} */}
             {this.camel.render()}
             {this.target.render()}
             {this.fireballs.map(f => f.render())}

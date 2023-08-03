@@ -1,0 +1,114 @@
+
+
+
+Array Overview:
+    let arr = [1, 2, 3, 4, 5];
+    arr[x]; // 3  -- O(x). Whats the best case? x=0,O(1). What about worst case? x=n,O(n)
+    // What Big-O runtime complexity does something have -> What is the average case?
+    // x=n/2,O(n/2). But O(n * constant) =~ O(n)
+    // O(n/2) == O(n * 1/2) =~ O(n)
+
+    // What machines do is look up the starting memory for the array, and add x.
+    // If arr starts at memory address 9280346, and our index is 5, machine does memory + index.
+    // Memory + index = 9280346 + 5 = 9280351
+    // What is the runtime complexity for this?
+    // Looking up memory address for start of array is O(1).
+    // The index is already provided for you, so it is also O(1).
+    // To put another way, how many operations needed to add memory + index?
+    // 1, we are just doing addition, which is constant.
+    // Therefore, the overall runtime complexity of an array lookup is O(1) or "constant"
+
+    delete arr[2]; // Removes the 3
+    // How does this really work?
+    // Imagine some memory lmadsnflksbadhsdacksdknflsnquwie12 45
+    //                                                     ^start of list
+    // Can't just simply delete
+    // To really delete it, we have to shift over all the elements after 3
+    // Or we can make some new memory and put all the elements in there
+    // What is the runtime complexity of that?
+    // (in other words) How many operations does it take to move n elements from one place in memory to another?
+    // O(n) but why? Because we visit each thing in memory and do an operation.
+
+
+
+
+    but what about the runtime complexity?
+    (runtime complexity is in relation to size of input)
+    (size of input is "n")
+
+    O(n) // to loop over entire input
+
+LinkedList:
+    Node based data structure
+    Node1 -> Node2 -> Node3 -> Node4 -> Node5 -> null;
+    head^                               tail^
+
+    What is a Node?
+    class Node {
+        constructor(value, next) {
+            this.value = value;
+            this.next = next;
+        }
+    }
+    let head = Node1(1, Node(2, Node(3, Node(4, Node(5)))))
+    ...
+    // "Correct" or "clean" way to do this:
+    let head = Node(1)
+    let currNode = head
+    head.next = Node(2)
+    currNode = currNode.next
+    currNode.next = Node(3)
+    currNode = currNode.next
+    currNode.next = Node(4)
+    currNode = currNode.next
+    currNode.next = Node(5)
+    // One more way because I'm annoying
+    let head = Node(1)
+    let curr = head;
+    for(i = 2; i < 6; i++) {
+        curr.next = Node(i)
+        curr = curr.next;
+    }
+
+    // How to access x-th node?
+    // Assume head
+    head.next.next // How to do this x times?
+    // HW: Use for loop to access x-th node.
+    // What does that tell us about runtime complexity?
+    // Or the number of operations?
+    // Have to go one by one, which is O(n)
+    //  because we do one (or other constant) operation(s) per node in our list
+
+    // We know O(n) is worse than O(1) or "constant"
+    // Why would you ever use this????!?!?!?!?!?!?
+
+
+    Node1 -> Node2 -> Node3 -> Node4 -> Node5 -> null;
+    head^                               tail^
+    // How do we delete node3?
+    // How do we shift Node4 into Node3's position?
+    // What is Node3's position, how is it maintained?
+    //   - head.next.next or Node2.next
+    Node2.next = Node4
+    // or
+    Node2.next = Node2.next.next
+    // How many operations was that?
+    //   - 3, (property lookup of next on Node2, property lookup of next on Node2.next, and assignment)
+    // How many operations would it take to delete any of them?
+    //   - yes and no
+    // assuming we can freely access any Node, then the runtime deletion is constant.
+    // But... you can't always access it.
+    // In those cases, the runtime is O(n)
+
+    // Mostly comparable. Deletion of Array is O(n) and Deletion of LinkedList is also O(n)
+
+    // HW (optional):
+    //  Implement the LinkedList class, and the operations of lookup by index and delete by index
+
+    // HW (required attempt):
+    //  Implement side-scrolling backgrounds into the platformer game.
+
+    // Next Time:
+    //    What to add to the game?
+    //    Projectiles moving that we have to dodge.
+    //    If hit 3x you get sent back (introduce health)
