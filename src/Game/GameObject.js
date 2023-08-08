@@ -2,7 +2,7 @@ import React from 'react';
 
 
 class GameObject {
-  constructor(x=null, y=null, dx=0, dy=0, image=null, xSize=5, ySize=5, xBorder=100, yBorder=100) {
+  constructor(x=null, y=null, dx=0, dy=0, image=null, xSize=5, ySize=5, xBorder=100, yBorder=100, useImageDirections=false) {
     this.x = x;
     this.y = y;
     this.dx = dx;
@@ -14,6 +14,12 @@ class GameObject {
     this.yBorder = yBorder;
     if (this.x === null || this.y === null) {
       this.jumpToRandom();
+    }
+    this.useImageDirections = useImageDirections;
+    if (this.useImageDirections) {
+      this.currImage = this.image + 'left.png';
+    } else {
+      this.currImage = this.image
     }
   }
 
@@ -41,17 +47,28 @@ class GameObject {
     this.y += this.dy * stepSize;
   }
 
+  updateImage(stepSize=0.01) {
+    if (this.useImageDirections && (Math.abs(this.dx) + Math.abs(this.dy) > 0)) {
+      if (Math.abs(this.dy) > Math.abs(this.dx)) {
+        this.currImage = this.image + (this.dy > 0 ? 'down.png' : 'up.png')
+      } else {
+        this.currImage = this.image + (this.dx > 0 ? 'right.png' : 'left.png')
+      }
+    }
+  }
+
   step(stepSize=0.01) {
     this.basicMovement(stepSize)
     this.checkBorders()
+    this.updateImage(stepSize)
     return this;
   }
 
   render(props) {
     return (
       <img 
-        alt={this.image}
-        src={this.image}
+        alt={this.currImage}
+        src={this.currImage}
         style={{
           position: 'absolute',
           left: `${this.x}%`,

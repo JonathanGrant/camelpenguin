@@ -3,7 +3,6 @@ import React from 'react';
 import GameLevelBase from "./GameLevel";
 import {
   GameObject,
-  AccelerationObject,
   PlatformerObject,
   TimeToLiveObject,
 } from "./GameObject";
@@ -25,7 +24,7 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
     this.fireballs = [];
     this.blackholes = [];
     this.camel = new PlatformerObject(
-        0, 0.03, null, null, 0, 0, "/camel.png", 5, 5,
+        0, 0.03, null, null, 0, 0, "/images/camels/camel_", 5, 5, 100, 100, true,
     );
     this.target = new GameObject(
       null, null, this.tgtSpeed, this.tgtSpeed, "/target.png", 2.5, 2.5,
@@ -39,7 +38,7 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
   }
 
   changeArea(areaChange) {
-    if ((areaChange != 0) && (this.currentArea + areaChange >= 0) && (this.currentArea + areaChange < this.areas.length)) {
+    if ((areaChange !== 0) && (this.currentArea + areaChange >= 0) && (this.currentArea + areaChange < this.areas.length)) {
       this.currentArea += areaChange;
       if (areaChange < 0) {
         this.camel.x = this.camel.xBorder - this.camel.xSize - 1;
