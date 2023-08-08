@@ -5,16 +5,22 @@ import React from 'react';
 import GameContainer from './Game/GameContainer';
 import CamelPlatformerGameLevel from './Game/CamelPlatformerGameLevel';
 
+const areas = [
+  [0, 1, 2, 3].map(i => `/images/backgrounds/hobbiton_0${i}.png`),
+  [0, 1, 2, 3].map(i => `/images/backgrounds/penguin_0${i}.png`),
+  [0, 1, 2, 3].map(i => `/images/backgrounds/koala_0${i}.png`),
+]
+
 
 const levels = [
-  new CamelPlatformerGameLevel(0.1, '/images/backgrounds/level_00.jpeg'),
-  new CamelPlatformerGameLevel(0.3, '/images/backgrounds/level_01.jpeg'),
-  new CamelPlatformerGameLevel(1.0, '/images/backgrounds/level_02.jpeg'),
+  new CamelPlatformerGameLevel(0.1, areas[0], areas[0][1]),
+  new CamelPlatformerGameLevel(0.3, areas[1], areas[1][1]),
+  new CamelPlatformerGameLevel(1.0, areas[2], areas[2][1]),
 ];
 
 
 function App() {
-  const [stepSize, setStepSize] = React.useState(4);
+  const [stepSize, setStepSize] = React.useState(1);
   const [time, setTime] = React.useState(0);
   const [game, setGame] = React.useState(new GameContainer(levels));
 

@@ -18,8 +18,10 @@ export default class GameContainer {
         this.time += stepSize / 1000;
         this.getCurrentLevel().step(stepSize);
         this.score += this.getCurrentLevel().accumulatedScore();
-        if (this.getCurrentLevel().completed() && this.currentLevel < this.levels.length - 1) {
-            this.currentLevel += 1;
+        let accumulatedLevel = this.getCurrentLevel().completed()
+        if (accumulatedLevel != 0 && (this.currentLevel + accumulatedLevel >= 0) && (this.currentLevel + accumulatedLevel < this.levels.length)) {
+            this.currentLevel += accumulatedLevel;
+            this.getCurrentLevel().reset();
         }
     }
 
@@ -37,6 +39,7 @@ export default class GameContainer {
                 height: `${this.height}px`,
                 backgroundImage: `url(${this.getCurrentLevel().bg})`,
                 backgroundSize: 'cover',
+                position: 'relative',
             }}
         >
         <div className="game-score">Time = {this.time.toFixed(4)}, Score = {this.score}</div>

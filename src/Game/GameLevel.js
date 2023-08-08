@@ -5,8 +5,7 @@ export default class GameLevelBase {
     // Each child class must implement step and render functions
     constructor(bg) {
         this.bg = bg;
-        this.scoreAccumulated = 0;
-        this.isCompleted = false;
+        this.reset()
     }
 
     step(stepSize) {
@@ -20,6 +19,13 @@ export default class GameLevelBase {
     }
 
     completed() {
-        return this.isCompleted;
+        let lvl = this.levelAccumulation;
+        this.levelAccumulation = 0;
+        return lvl;
+    }
+
+    reset() {
+        this.scoreAccumulated = 0;
+        this.levelAccumulation = 0;
     }
 }
