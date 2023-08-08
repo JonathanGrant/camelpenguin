@@ -2,7 +2,7 @@ import React from 'react';
 
 
 class GameObject {
-  constructor(x=0, y=0, dx=0, dy=0, image=null, xSize=0, ySize=0, xBorder=1000, yBorder=1000) {
+  constructor(x=null, y=null, dx=0, dy=0, image=null, xSize=5, ySize=5, xBorder=100, yBorder=100, useImageDirections=false) {
     this.x = x;
     this.y = y;
     this.dx = dx;
@@ -12,6 +12,15 @@ class GameObject {
     this.ySize = ySize;
     this.xBorder = xBorder;
     this.yBorder = yBorder;
+    if (this.x === null || this.y === null) {
+      this.jumpToRandom();
+    }
+    this.useImageDirections = useImageDirections;
+    if (this.useImageDirections) {
+      this.currImage = this.image + 'left.png';
+    } else {
+      this.currImage = this.image
+    }
   }
 
   jumpToRandom() {
@@ -38,23 +47,34 @@ class GameObject {
     this.y += this.dy * stepSize;
   }
 
+  updateImage(stepSize=0.01) {
+    if (this.useImageDirections && (Math.abs(this.dx) + Math.abs(this.dy) > 0)) {
+      if (Math.abs(this.dy) > Math.abs(this.dx)) {
+        this.currImage = this.image + (this.dy > 0 ? 'down.png' : 'up.png')
+      } else {
+        this.currImage = this.image + (this.dx > 0 ? 'right.png' : 'left.png')
+      }
+    }
+  }
+
   step(stepSize=0.01) {
     this.basicMovement(stepSize)
     this.checkBorders()
+    this.updateImage(stepSize)
     return this;
   }
 
   render(props) {
     return (
       <img 
-        alt={this.image}
-        src={this.image}
+        alt={this.currImage}
+        src={this.currImage}
         style={{
           position: 'absolute',
-          left: this.x,
-          top: this.y,
-          width: `${this.xSize}px`,
-          height: `${this.ySize}px`,
+          left: `${this.x}%`,
+          top: `${this.y}%`,
+          width: `${this.xSize}%`,
+          height: `${this.ySize}%`,
         }}
         {...props}
       />
@@ -81,14 +101,27 @@ class AccelerationObject extends GameObject {
 }
 
 class PlatformerObject extends AccelerationObject {
+  constructor(...args) {
+    super(...args);
+    this.accumulatedAreaChange = 0;
+  }
+
+  areaChange() {
+    let tmp = this.accumulatedAreaChange;
+    this.accumulatedAreaChange = 0;
+    return tmp;
+  }
+
   checkBorders() {
     if (this.x < 0) {
       this.dx = 0;
       this.x = 0;
+      this.accumulatedAreaChange = -1;
     }
     if (this.x > this.xBorder - this.xSize) {
       this.dx = 0;
       this.x = this.xBorder - this.xSize;
+      this.accumulatedAreaChange = 1;
     }
     if (this.y < 0) {
       this.dy = 0;

@@ -3,29 +3,57 @@ import React from 'react';
 import GameLevelBase from "./GameLevel";
 import {
   GameObject,
-  AccelerationObject,
   PlatformerObject,
   TimeToLiveObject,
 } from "./GameObject";
 
 export default class CamelPlatformerGameLevel extends GameLevelBase {
-  constructor(tgtSpeed=0, ...args) {
+  constructor(tgtSpeed=0, areas=[], ...args) {
     super(...args);
 
-    // TODO: Propagate height and width or replace everything with percents
+    // Lets make areas modify the bg image instead of a new bg image per area
+    this.areas = areas;
+    this.currentArea = parseInt(this.areas.length / 2);
+    this.bg = this.getCurrentArea();
+    this.tgtSpeed = tgtSpeed;
+    this.reset()
+  }
+
+  reset() {
+    super.reset()
     this.fireballs = [];
+    this.blackholes = [];
     this.camel = new PlatformerObject(
-        0, 0.005, Math.random() * 750, Math.random() * 750, 0, 0, "/camel.png", 50, 50, 800, 800,
+        0, 0.03, null, null, 0, 0, "/images/camels/camel_", 5, 5, 100, 100, true,
     );
     this.target = new GameObject(
-      Math.random() * 750, Math.random() * 750, tgtSpeed, tgtSpeed, "/target.png", 25, 25, 800, 800,
+      null, null, this.tgtSpeed, this.tgtSpeed, "/target.png", 2.5, 2.5,
     );
-    this.hits = 0;
+    this.tgtHits = 0;
+    this.selfHits = 0;
+  }
+
+  getCurrentArea() {
+    return this.areas[this.currentArea];
+  }
+
+  changeArea(areaChange) {
+    if ((areaChange !== 0) && (this.currentArea + areaChange >= 0) && (this.currentArea + areaChange < this.areas.length)) {
+      this.currentArea += areaChange;
+      if (areaChange < 0) {
+        this.camel.x = this.camel.xBorder - this.camel.xSize - 1;
+      } else {
+        this.camel.x = 1;
+      }
+      this.bg = this.getCurrentArea()
+    }
   }
 
   step(stepSize) {
     this.camel.step(stepSize);
+    this.changeArea(this.camel.areaChange());
     this.target.step(stepSize);
+    this.blackholeSteps(stepSize);
     // Fireball loop
     // Check if any fireballs should dissapear, either through TTL or collision
     this.fireballs = this.fireballs.filter((fireball) => {
@@ -33,8 +61,8 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
       if (fireball.hasCollision(this.target)) {
         // Hit! Increase score
         this.scoreAccumulated += 10 * Math.abs(this.target.dx);
-        this.hits += 1;
-        if (this.hits >= 3) this.isCompleted = true;
+        this.tgtHits += 1;
+        if (this.tgtHits >= 3) this.levelAccumulation = 1;
         this.target.jumpToRandom();
         return null;
       }
@@ -58,9 +86,31 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
         fDy = -1;
     }
     const newFireball = new TimeToLiveObject(
-        250, this.camel.x, this.camel.y, Math.sign(fDx) * 1, Math.sign(fDy) * 1, "/fireball.png", 20, 20, 800, 800,
+        250, this.camel.x, this.camel.y, Math.sign(fDx) * 1, Math.sign(fDy) * 1, "/fireball.png", 2, 2,
     );
     this.fireballs.push(newFireball);
+  }
+
+  blackholeSteps(stepSize) {
+    this.blackholes = this.blackholes.filter((bhole) => {
+      // Check if collided with player
+      if (bhole.hasCollision(this.camel)) {
+        // Hit! Decrease score
+        this.scoreAccumulated -= 10 * Math.abs(this.target.dx);
+        this.selfHits += 1;
+        if (this.selfHits >= 3) this.levelAccumulation = -1;
+        return null;
+      }
+      return bhole.step(stepSize);
+    });
+    let bholeSteps = 200;
+    let bholeSpeed = 0.5;
+    if (this.blackholes.length > 0 && this.blackholes[this.blackholes.length - 1].steps < bholeSteps) return;
+    // Recreate blackholes
+    let directions = [[0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1], [-1, 0], [1, 0]]
+    this.blackholes = directions.map(dxy => new TimeToLiveObject(
+      bholeSteps, this.target.x, this.target.y, bholeSpeed*dxy[0], bholeSpeed*dxy[1], "/blackhole.png", 2, 2,
+    ))
   }
 
   keyDown(e) {
@@ -103,9 +153,11 @@ export default class CamelPlatformerGameLevel extends GameLevelBase {
   render() {
     return (
         <React.Fragment>
+            {/* {this.areas[this.currentArea].render()} */}
             {this.camel.render()}
             {this.target.render()}
             {this.fireballs.map(f => f.render())}
+            {this.blackholes.map(f => f.render())}
         </React.Fragment>
     )
   }
