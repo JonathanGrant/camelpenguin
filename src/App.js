@@ -4,6 +4,7 @@ import React from 'react';
 // Import our classes
 import GameContainer from './Game/GameContainer';
 import CamelPlatformerGameLevel from './Game/CamelPlatformerGameLevel';
+import WinGameLevel from './Game/WinGameLevel';
 
 const areas = [
   [0, 1, 2, 3].map(i => `/images/backgrounds/hobbiton_0${i}.png`),
@@ -16,6 +17,7 @@ const levels = [
   new CamelPlatformerGameLevel(0.1, areas[0], areas[0][1]),
   new CamelPlatformerGameLevel(0.3, areas[1], areas[1][1]),
   new CamelPlatformerGameLevel(1.0, areas[2], areas[2][1]),
+  new WinGameLevel('/images/backgrounds/winner.jpeg')
 ];
 
 
